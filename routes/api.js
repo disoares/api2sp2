@@ -303,7 +303,7 @@ router.get('/swapquote', function (req, res) {
   }
 });
 router.get('/swapquotein', function (req, res) {
-  console.log("started");
+  /*console.log("started");
   if (req.url == "/swapquotein") {
 
   } else {
@@ -323,7 +323,8 @@ router.get('/swapquotein', function (req, res) {
           }
 
       }
-  }
+  }*/
+  res.send('oi');
 });
 
 module.exports = router;
