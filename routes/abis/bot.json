@@ -1,0 +1,300 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amounttax",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "_swapBNBpT",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amounttax",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "_swapTpBNB",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amounttax",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "_swapTpT",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amounttax",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "_swapTpWBNB",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amounttax",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "_swapWBNBpT",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amounttax",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "gettransfer",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amountIn",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "quoteBNBpT",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amountIn",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "quoteTpBNB",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amountIn",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Mtoken",
+				"type": "address"
+			},
+			{
+				"internalType": "contract IBEP20",
+				"name": "BEP20Rtoken",
+				"type": "address"
+			}
+		],
+		"name": "quotetpt",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "router",
+		"outputs": [
+			{
+				"internalType": "contract IDEXRouter",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
