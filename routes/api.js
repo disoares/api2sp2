@@ -303,10 +303,10 @@ router.get('/swapquote', function (req, res) {
     }
 });
 router.get('/swapquotein', function (req, res) {
-    const account = req.body.account;
-    const amount = req.body.amount;
-    const tokenA = req.body.tokenA;
-    const tokenB = req.body.tokenB;
+    const account = req.query.account;
+    const amount = req.query.amount;
+    const tokenA = req.query.tokenA;
+    const tokenB = req.query.tokenB;
 
     if (req.url == "/swapquotein") {
 
