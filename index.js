@@ -7,13 +7,13 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-/*const cors = require('cors');
+const cors = require('cors');
 app.use((req, res, next) => {
     console.log("check cors");
     res.header("Access-Control-Allow-Origin", "*")
     app.use(cors);
     next();
-});*/
+});
 
 app.use("/swap", api);
 app.use("/swapquotein", api);

@@ -317,8 +317,7 @@ router.get('/swapquotein', function (req, res) {
               tokenBCT: toChecksumAddress(strin[1].split("&")[3])
           }
           try {
-              //buydatain(data, res)
-              res.json(data);
+              buydatain(data, res)
           } catch (error) {
               errorreturn(error, res)
           }
