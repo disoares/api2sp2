@@ -320,11 +320,9 @@ router.get('/swapquotein', function (req, res) {
                 tokenBCT: toChecksumAddress(tokenB)
             }
             try {
-                //buydatain(data, res)
-                res.send(account + ' ' + amount + ' ' + tokenA + ' ' + tokenB);
+                buydatain(data, res)
             } catch (error) {
-                //errorreturn(error, res)
-                res.send(error);
+                errorreturn(error, res)
             }
         }
     }
