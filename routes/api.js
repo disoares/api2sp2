@@ -103,8 +103,7 @@ async function buydatain(data, res) {
         status: "ok",
         msg: "[100] Request ok.",
         data: {
-            amount_usd: nextblock(data.amount, 18),
-            price_brl: "0",
+            amount_usd: "0",
             total_brl: "0",
             fee_brl: "0",
             send_brl: "0",
@@ -194,8 +193,14 @@ async function buytwt(data, res, h) {
     let amountax = data.amountax
     let tokenACT = data.tokenACT
     let tokenBCT = data.tokenBCT
+    const tkA = new web3.Contract(bnbabi, tokenACT);
     const tk = new web3.Contract(bnbabi, tokenBCT);
     const dec = await tk.methods.decimals().call()
+    const decA = await tkA.methods.decimals().call()
+    if (tokenACT != wbnb) {
+        const h = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenACT).then((response) => response.json())
+        amount = value(nextblock(amount, decA), h.BuyTax, decA);
+    }
     if (tokenBCT == tokenACT) {
         errorreturn("Cannot Swap Same Token", res)
     } else {
