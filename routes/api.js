@@ -281,17 +281,23 @@ router.post('/swap', function (req, res) {
 });
 router.get('/swapquote', function (req, res) {
     console.log("started");
+
+    const account = req.query.account;
+    const amount = req.query.amount;
+    const tokenA = req.query.tokenA;
+    const tokenB = req.query.tokenB;
+
     if (req.url == "/swapquote") {
 
     } else {
         if (req.url.includes("?")) {
             let strin = req.url.split("?")
             let data = {
-                account: toChecksumAddress(strin[1].split("&")[0]),
-                amount: strin[1].split("&")[1],
+                account: toChecksumAddress(account),
+                amount: amount,
                 amountax: 0,
-                tokenACT: toChecksumAddress(strin[1].split("&")[2]),
-                tokenBCT: toChecksumAddress(strin[1].split("&")[3])
+                tokenACT: toChecksumAddress(tokenA),
+                tokenBCT: toChecksumAddress(tokenB)
             }
             try {
                 buydata(data, res)
