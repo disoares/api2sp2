@@ -16,7 +16,7 @@ const web3 = new Web3(provider);
 //variaveis uteis
 const usdt = "0x55d398326f99059fF775485246999027B3197955";
 const wbnb = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const wallet = "0xafc5aC21810dc7d1E452E8Fc2Ca0965753A4Cee1";
+const wallet = "0xdb7CEce2539B869932e873263188C44A9142f990";
 const gwei = 5000000000;
 //contratos principais
 const pancake = new web3.Contract(cakeabi, "0x10ED43C718714eb63d5aA57B78B54704E256024E");
