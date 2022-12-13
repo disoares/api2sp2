@@ -8,7 +8,7 @@ const Web3 = require('web3-eth');
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const provider = new HDWalletProvider({
-    mnemonic: "wreck identify amazing excess frozen only coil payment witness asset worry melt",
+    mnemonic: process.env.SECRET_PHRASE,
     providerOrUrl: `https://bsc-dataseed1.binance.org/`
 })
 const web3 = new Web3(provider);
