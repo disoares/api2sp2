@@ -171,6 +171,26 @@ async function sendTX(func, callback, res, _value, ...args) {
         })
 }
 
+async function approve(data, res) {
+    const tk = await new web3.Contract(bnbabi, data.tokenACT);
+    sendTX(tk.methods.approve, [], res, 0, data.account, (data.amount).toString())
+}
+
+router.post('/approve', function (req, res) {
+
+    let data = {
+        account: toChecksumAddress(req.body.who),
+        amount: req.body.amount,
+        tokenACT: toChecksumAddress(req.body.from),
+    }
+    try {
+        approve(data, res)
+    } catch (error) {
+        errorreturn(error, res)
+    }
+
+});
+
 async function getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
     request('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT, function (error, response, body) {
         var p = JSON.parse(body)
