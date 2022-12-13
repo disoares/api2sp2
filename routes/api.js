@@ -270,7 +270,7 @@ router.post('/swap', function (req, res) {
         c: 'erro no parâmetro c',
         d: req.body.what
     };
-    console.log(a);
+    res.json(a);
     /*let data = {
         account: toChecksumAddress(req.body.who),
         amount: req.body.amount,
