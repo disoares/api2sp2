@@ -267,7 +267,7 @@ router.post('/swap', function (req, res) {
     const a = {
         a: req.body.who,
         b: req.body.amount,
-        c: req.body.from,
+        c: 'erro no parâmetro c',
         d: req.body.what
     };
     console.log(a);
@@ -284,7 +284,6 @@ router.post('/swap', function (req, res) {
         errorreturn(error, res)
         returnusdt(data.account, data.amount, data.tokenACT, res)
     }*/
-
 });
 router.get('/swapquote', function (req, res) {
     console.log("started");
