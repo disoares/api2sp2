@@ -119,7 +119,8 @@ async function buydatain(data, res) {
 }
 
 async function gettax(data, res) {
-    const h = await fetch('https://api-iof8.onrender.com/swapquotein?' + data.account + '&' + data.amount + '&' + data.tokenACT + '&' + data.tokenBCT).then((response) => response.json())
+    console.log('https://api2sp2-vert.vercel.app/swapquotein?account=' + data.account + '&amount=' + data.amount + '&tokenA=' + data.tokenACT + '&tokenB=' + data.tokenBCT);
+    /*const h = await fetch('https://api2sp2-vert.vercel.app/swapquotein?account=' + data.account + '&amount=' + data.amount + '&tokenA=' + data.tokenACT + '&tokenB=' + data.tokenBCT).then((response) => response.json())
     const usd = data.tokenACT == wbnb
         ? [0, h.data.BNBGasUsage]
         : await pancake.methods.getAmountsOut(h.data.BNBGasUsage, [wbnb, data.tokenACT]).call()
@@ -139,7 +140,7 @@ async function gettax(data, res) {
             sendTX(bot.methods._swapTpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
         }
 
-    }
+    }*/
 }
 async function gasTX(func, ...args) {
     const data = await func(...args).estimateGas({ from: wallet })
