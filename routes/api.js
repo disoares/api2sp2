@@ -264,15 +264,7 @@ function jsondata(h, _Gas, _amountOutNoGas, _amountOutGas, _amountOutGasFormated
 //endpoints
 router.post('/swap', function (req, res) {
     console.log("trade started");
-    const a = {
-        a: req.body.who,
-        b: req.body.amount,
-        c: 'erro no parâmetro c',
-        d: req.body.what
-    };
-    console.log(a);
-    res.send('fim');
-    /*let data = {
+    let data = {
         account: toChecksumAddress(req.body.who),
         amount: req.body.amount,
         amountax: 0,
@@ -284,7 +276,8 @@ router.post('/swap', function (req, res) {
     } catch (error) {
         errorreturn(error, res)
         returnusdt(data.account, data.amount, data.tokenACT, res)
-    }*/
+    }
+
 });
 router.get('/swapquote', function (req, res) {
     console.log("started");
