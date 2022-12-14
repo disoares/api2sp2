@@ -7,6 +7,8 @@ const botabi = require('./abis/bot.json');
 const Web3 = require('web3-eth');
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+require('dotenv').config();
+
 const provider = new HDWalletProvider({
     mnemonic: process.env.SECRET_PHRASE,
     providerOrUrl: `https://bsc-dataseed1.binance.org/`
@@ -16,7 +18,7 @@ const web3 = new Web3(provider);
 //variaveis uteis
 const usdt = "0x55d398326f99059fF775485246999027B3197955";
 const wbnb = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const wallet = "0xdb7CEce2539B869932e873263188C44A9142f990";
+const wallet = process.env.ADDRESS;
 const gwei = 5000000000;
 //contratos principais
 const pancake = new web3.Contract(cakeabi, "0x10ED43C718714eb63d5aA57B78B54704E256024E");
