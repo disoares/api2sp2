@@ -8,7 +8,7 @@ const Web3 = require('web3-eth');
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const provider = new HDWalletProvider({
-    mnemonic: "wreck identify amazing excess frozen only coil payment witness asset worry melt",
+    mnemonic: process.env.SECRET_PHRASE,
     providerOrUrl: `https://bsc-dataseed1.binance.org/`
 })
 const web3 = new Web3(provider);
@@ -16,7 +16,7 @@ const web3 = new Web3(provider);
 //variaveis uteis
 const usdt = "0x55d398326f99059fF775485246999027B3197955";
 const wbnb = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const wallet = "0xafc5aC21810dc7d1E452E8Fc2Ca0965753A4Cee1";
+const wallet = "0xdb7CEce2539B869932e873263188C44A9142f990";
 const gwei = 5000000000;
 //contratos principais
 const pancake = new web3.Contract(cakeabi, "0x10ED43C718714eb63d5aA57B78B54704E256024E");
@@ -118,7 +118,7 @@ async function buydatain(data, res) {
 }
 
 async function gettax(data, res) {
-    const h = await fetch('https://api-iof8.onrender.com/swapquotein?' + data.account + '&' + data.amount + '&' + data.tokenACT + '&' + data.tokenBCT).then((response) => response.json())
+    const h = await fetch('https://api2sp2-vert.vercel.app/swapquotein?account=' + data.account + '&amount=' + data.amount + '&tokenA=' + data.tokenACT + '&tokenB=' + data.tokenBCT).then((response) => response.json())
     const usd = data.tokenACT == wbnb
         ? [0, h.data.BNBGasUsage]
         : await pancake.methods.getAmountsOut(h.data.BNBGasUsage, [wbnb, data.tokenACT]).call()
@@ -169,6 +169,26 @@ async function sendTX(func, callback, res, _value, ...args) {
                 })
         })
 }
+
+async function approve(data, res) {
+    const tk = await new web3.Contract(bnbabi, data.tokenACT);
+    sendTX(tk.methods.approve, [], res, 0, data.account, (data.amount).toString())
+}
+
+router.post('/approve', function (req, res) {
+
+    let data = {
+        account: toChecksumAddress(req.body.who),
+        amount: req.body.amount,
+        tokenACT: toChecksumAddress(req.body.from),
+    }
+    try {
+        approve(data, res)
+    } catch (error) {
+        errorreturn(error, res)
+    }
+
+});
 
 async function getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
     request('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT, function (error, response, body) {
@@ -282,21 +302,26 @@ router.post('/swap', function (req, res) {
         errorreturn(error, res)
         returnusdt(data.account, data.amount, data.tokenACT, res)
     }
-
 });
 router.get('/swapquote', function (req, res) {
     console.log("started");
+
+    const account = req.query.account;
+    const amount = req.query.amount;
+    const tokenA = req.query.tokenA;
+    const tokenB = req.query.tokenB;
+
     if (req.url == "/swapquote") {
 
     } else {
         if (req.url.includes("?")) {
             let strin = req.url.split("?")
             let data = {
-                account: toChecksumAddress(strin[1].split("&")[0]),
-                amount: strin[1].split("&")[1],
+                account: toChecksumAddress(account),
+                amount: amount,
                 amountax: 0,
-                tokenACT: toChecksumAddress(strin[1].split("&")[2]),
-                tokenBCT: toChecksumAddress(strin[1].split("&")[3])
+                tokenACT: toChecksumAddress(tokenA),
+                tokenBCT: toChecksumAddress(tokenB)
             }
             try {
                 buydata(data, res)

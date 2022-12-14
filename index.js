@@ -18,6 +18,7 @@ app.use((req, res, next) => {
 app.use("/swap", api);
 app.use("/swapquotein", api);
 app.use("/swapquote", api);
+app.use("/approve", api);
 app.use("/", api);
 
 const port = process.env.PORT || 9001;
