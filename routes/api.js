@@ -5,6 +5,8 @@ const cakeabi = require('./abis/pankakeRouter.json');
 const bnbabi = require('./abis/bnbabis.json');
 const botabi = require('./abis/bot.json');
 const Web3 = require('web3-eth');
+const dotenv = require('dotenv');
+dotenv.config();
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const provider = new HDWalletProvider({
@@ -16,13 +18,13 @@ const web3 = new Web3(provider);
 //variaveis uteis
 const usdt = "0x55d398326f99059fF775485246999027B3197955";
 const wbnb = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const wallet = "0xdb7CEce2539B869932e873263188C44A9142f990";
+const botCT = "0xdA25BA288C333CF04E129065BdEE3133CD81f423";
+const wallet = process.env.WALLET_ADDRESS;
 const gwei = 5000000000;
 //contratos principais
 const pancake = new web3.Contract(cakeabi, "0x10ED43C718714eb63d5aA57B78B54704E256024E");
-const bot = new web3.Contract(botabi, "0xdA25BA288C333CF04E129065BdEE3133CD81f423");
+const bot = new web3.Contract(botabi, botCT);
 //funçoes
-
 function er(e) {
     if (e.toString().includes(".")) {
         return "."
@@ -176,9 +178,8 @@ async function approve(data, res) {
 }
 
 router.post('/approve', function (req, res) {
-
     let data = {
-        account: toChecksumAddress(req.body.who),
+        account: botCT,
         amount: req.body.amount,
         tokenACT: toChecksumAddress(req.body.from),
     }
@@ -215,30 +216,33 @@ async function buytwt(data, res, h) {
     let tokenBCT = data.tokenBCT
     const tkA = new web3.Contract(bnbabi, tokenACT);
     const tk = new web3.Contract(bnbabi, tokenBCT);
+
+    const balanceTA = await tkA.methods.balanceOf(wallet).call()
+
     const dec = await tk.methods.decimals().call()
     const decA = await tkA.methods.decimals().call()
     if (tokenACT != wbnb) {
         const h = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenACT).then((response) => response.json())
-        amount = value(nextblock(amount, decA), h.BuyTax, decA);
+        amount = value(nextblock(amount, decA), (100 - h.BuyTax), decA);
     }
     if (tokenBCT == tokenACT) {
         errorreturn("Cannot Swap Same Token", res)
     } else {
         if (tokenACT == wbnb) {
-            const gas = await gasTX(bot.methods._swapWBNBpT, account, "1000000000", "1000000000", tokenACT, tokenBCT)
+            const gas = await gasTX(bot.methods._swapWBNBpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
             const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
             const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
             const a = await callTX(bot.methods.quoteBNBpT, amount, tokenACT, tokenBCT)
             getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
         } else {
             if (tokenBCT == wbnb) {
-                const gas = await gasTX(bot.methods._swapTpWBNB, account, "1000000000", "1000000000", tokenACT, tokenBCT)
+                const gas = await gasTX(bot.methods._swapTpWBNB, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
                 const tax = ((gas) * gwei).toString()
                 const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
                 const a = await callTX(bot.methods.quoteTpBNB, amount, tokenACT, tokenBCT)
                 getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
             } else {
-                const gas = await gasTX(bot.methods._swapTpT, account, "1000000000", "1000000000", tokenACT, tokenBCT)
+                const gas = await gasTX(bot.methods._swapTpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
                 const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
                 const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
                 const a = await callTX(bot.methods.quotetpt, amount, tokenACT, tokenBCT)
