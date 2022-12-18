@@ -120,13 +120,13 @@ async function buydatain(data, res) {
 }
 
 async function gettax(data, res) {
-    const h = await fetch('https://api2sp2-vert.vercel.app/swapquotein?account=' + data.account + '&amount=' + data.amount + '&tokenA=' + data.tokenACT + '&tokenB=' + data.tokenBCT).then((response) => response.json())
+    const h = await fetch('http://api2sp2-vert.vercel.app/swapquotein?account=' + data.account + '&amount=' + data.amount + '&tokenA=' + data.tokenACT + '&tokenB=' + data.tokenBCT).then((response) => response.json())
     const usd = data.tokenACT == wbnb
         ? [0, h.data.BNBGasUsage]
-        : await pancake.methods.getAmountsOut(h.data.BNBGasUsage, [wbnb, data.tokenACT]).call()
+        : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
     let datap = {
         account: data.account,
-        amount: (data.amount - usd[1]).toString(),
+        amount: (data.amount - usd[1]).toLocaleString('fullwide', { useGrouping: false }),
         amountax: usd[1],
         tokenACT: data.tokenACT,
         tokenBCT: data.tokenBCT
@@ -295,7 +295,7 @@ router.post('/swap', function (req, res) {
     console.log("trade started");
     let data = {
         account: toChecksumAddress(req.body.who),
-        amount: req.body.amount,
+        amount: (req.body.amount).toString(),
         amountax: 0,
         tokenACT: toChecksumAddress(req.body.from),
         tokenBCT: toChecksumAddress(req.body.what)
@@ -319,10 +319,9 @@ router.get('/swapquote', function (req, res) {
 
     } else {
         if (req.url.includes("?")) {
-            let strin = req.url.split("?")
             let data = {
                 account: toChecksumAddress(account),
-                amount: amount,
+                amount: (amount).toString(),
                 amountax: 0,
                 tokenACT: toChecksumAddress(tokenA),
                 tokenBCT: toChecksumAddress(tokenB)
@@ -348,7 +347,7 @@ router.get('/swapquotein', function (req, res) {
         if (req.url.includes("?")) {
             let data = {
                 account: toChecksumAddress(account),
-                amount: amount,
+                amount: (amount).toString(),
                 amountax: 0,
                 tokenACT: toChecksumAddress(tokenA),
                 tokenBCT: toChecksumAddress(tokenB)
