@@ -137,6 +137,7 @@ async function gettax(data, res) {
         }
     }
     const h = await onbuytwt(data, res, p)
+    console.log(h);
     const usd = data.tokenACT == wbnb
         ? [0, h.data.BNBGasUsage]
         : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
