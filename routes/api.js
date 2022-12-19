@@ -383,12 +383,15 @@ router.post('/swap', function (req, res) {
         tokenACT: toChecksumAddress(req.body.from),
         tokenBCT: toChecksumAddress(req.body.what)
     }
-    try {
+
+    gettax(data, res)
+
+    /*try {
         gettax(data, res)
     } catch (error) {
         errorreturn(error, res)
         returnusdt(data.account, data.amount, data.tokenACT, res)
-    }
+    }*/
 });
 router.get('/swapquote', function (req, res) {
     console.log("started");
