@@ -137,7 +137,6 @@ async function gettax(data, res) {
         }
     }
     const h = await onbuytwt(data, res, p)
-    console.log(h);
     /*const usd = data.tokenACT == wbnb
         ? [0, h.data.BNBGasUsage]
         : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
@@ -148,8 +147,9 @@ async function gettax(data, res) {
         tokenACT: data.tokenACT,
         tokenBCT: data.tokenBCT
     }
-    console.log(datap);
-     if (data.tokenACT == wbnb) {
+    console.log(datap);*/
+    console.log(h);
+    /* if (data.tokenACT == wbnb) {
          sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
      } else {
          if (datap.tokenBCT == wbnb) {
@@ -270,14 +270,7 @@ async function buytwt(data, res, h) {
     }
 }
 async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
-    try {
-        console.log('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT);
-        const t = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
-        console.log(t);
-    } catch (error) {
-        console.log(error);
-    }
-    /*let p = JSON.parse(t);
+    const p = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
     const BuyTax = 100 - parseInt(p.BuyTax)
     return (
         jsondata(
@@ -289,7 +282,7 @@ async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
             (gas) * gwei,
             nextblock(usd, 18)
         )
-    );*/
+    );
 }
 async function onbuytwt(data, res, h) {
     let account = data.account
@@ -383,15 +376,12 @@ router.post('/swap', function (req, res) {
         tokenACT: toChecksumAddress(req.body.from),
         tokenBCT: toChecksumAddress(req.body.what)
     }
-
-    gettax(data, res)
-
-    /*try {
+    try {
         gettax(data, res)
     } catch (error) {
         errorreturn(error, res)
         returnusdt(data.account, data.amount, data.tokenACT, res)
-    }*/
+    }
 });
 router.get('/swapquote', function (req, res) {
     console.log("started");
