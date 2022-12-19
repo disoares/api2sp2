@@ -121,7 +121,7 @@ async function buydatain(data, res) {
 }
 
 async function gettax(data, res) {
-    var h = {
+    var p = {
         status: "ok",
         msg: "[100] Request ok.",
         data: {
@@ -136,7 +136,7 @@ async function gettax(data, res) {
             total_bxbrz: "0",
         }
     }
-    const h = await onbuytwt(data, res, h)
+    const h = await onbuytwt(data, res, p)
     const usd = data.tokenACT == wbnb
         ? [0, h.data.BNBGasUsage]
         : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
@@ -147,7 +147,8 @@ async function gettax(data, res) {
         tokenACT: data.tokenACT,
         tokenBCT: data.tokenBCT
     }
-    console.log(datap)
+    console.log(datap);
+    console.log(h);
     /* if (data.tokenACT == wbnb) {
          sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
      } else {
