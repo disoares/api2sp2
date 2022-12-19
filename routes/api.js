@@ -270,7 +270,16 @@ async function buytwt(data, res, h) {
     }
 }
 async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
-    const p = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
+    console.log(dec)
+    console.log(gas)
+    console.log(tax)
+    console.log(usd)
+    console.log(a)
+    console.log(tokenACT)
+    console.log(tokenBCT)
+    console.log(h)
+    const t = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
+    let p = JSON.parse(t);
     const BuyTax = 100 - parseInt(p.BuyTax)
     return (
         jsondata(
