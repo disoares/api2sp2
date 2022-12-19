@@ -137,9 +137,10 @@ async function gettax(data, res) {
         }
     }
     const h = await onbuytwt(data, res, p)
-    /*const usd = data.tokenACT == wbnb
-        ? [0, h.data.BNBGasUsage]
-        : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
+    console.log(h);
+    const usd = data.tokenACT == wbnb
+        ? [0, h.BNBGasUsage]
+        : await pancake.methods.getAmountsOut((h.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
     let datap = {
         account: data.account,
         amount: (data.amount - usd[1]).toLocaleString('fullwide', { useGrouping: false }),
@@ -147,8 +148,6 @@ async function gettax(data, res) {
         tokenACT: data.tokenACT,
         tokenBCT: data.tokenBCT
     }
-    console.log(datap);*/
-    console.log(h);
     /* if (data.tokenACT == wbnb) {
          sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
      } else {
