@@ -82,93 +82,6 @@ function nextblock(accountBalancemctTB, d) {
         return a;
     }
 }
-async function buydata(data, res) {
-    fetch('https://connect.smartpay.com.vc/api/swapix/swapquote?currency=brl&type=buy&conv=bxbrz&profile=transfer&target=amount&amount=' + data.amount)
-        .then((response) => response.json())
-        .then((h) => {
-            if (h.status == "ok") {
-                let datap = {
-                    account: data.account,
-                    amount: value(h.data.amount_usd, 100, 18),
-                    amountax: 0,
-                    tokenACT: data.tokenACT,
-                    tokenBCT: data.tokenBCT
-                }
-                buytwt(datap, res, h)
-            } else {
-                errorreturn(h.msg)
-            }
-        })
-}
-
-async function buydatain(data, res) {
-    var h = {
-        status: "ok",
-        msg: "[100] Request ok.",
-        data: {
-            amount_usd: "0",
-            total_brl: "0",
-            fee_brl: "0",
-            send_brl: "0",
-            timeout: "0",
-            amount_bxbrz: "0",
-            price_bxbrz: "0",
-            value_usd: "0",
-            total_bxbrz: "0",
-        }
-    }
-    buytwt(data, res, h)
-}
-
-async function gettax(data, res) {
-    var p = {
-        status: "ok",
-        msg: "[100] Request ok.",
-        data: {
-            amount_usd: "0",
-            total_brl: "0",
-            fee_brl: "0",
-            send_brl: "0",
-            timeout: "0",
-            amount_bxbrz: "0",
-            price_bxbrz: "0",
-            value_usd: "0",
-            total_bxbrz: "0",
-        }
-    }
-    onbuytwt(data, res, p)
-        .then(h => {
-            SENDTRANSACTION(data, res, h)
-        })
-        .catch(e => {
-            console.log(e)
-        })
-
-}
-async function SENDTRANSACTION(data, res, h) {
-    console.log(h);
-    const usd = data.tokenACT == wbnb
-        ? [0, h.data.BNBGasUsage]
-        : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
-    let datap = {
-        account: data.account,
-        amount: (data.amount - usd[1]).toLocaleString('fullwide', { useGrouping: false }),
-        amountax: usd[1],
-        tokenACT: data.tokenACT,
-        tokenBCT: data.tokenBCT
-    }
-    /* if (data.tokenACT == wbnb) {
-         sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
-     } else {
-         if (datap.tokenBCT == wbnb) {
-             sendTX(bot.methods._swapTpWBNB, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
-         } else {
-             sendTX(bot.methods._swapTpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
-         }
- 
-     }*/
-
-}
 async function gasTX(func, ...args) {
     const data = await func(...args).estimateGas({ from: wallet })
     return data;
@@ -199,98 +112,79 @@ async function sendTX(func, callback, res, _value, ...args) {
         })
 }
 
+async function buydata(data, res) {
+    const h = await fetch('https://connect.smartpay.com.vc/api/swapix/swapquote?currency=brl&type=buy&conv=bxbrz&profile=transfer&target=amount&amount=' + data.amount).then((response) => response.json())
+    if (h.status == "ok") {
+        let datap = {
+            account: data.account,
+            amount: value(h.data.amount_usd, 100, 18),
+            amountax: 0,
+            tokenACT: data.tokenACT,
+            tokenBCT: data.tokenBCT
+        }
+        const array = await onbuytwt(datap, res, h)
+        res.send(array)
+    } else {
+        errorreturn(h.msg)
+    }
+}
+
+function inArray() {
+    return {
+        status: "ok",
+        msg: "[100] Request ok.",
+        data: {
+            amount_usd: "0",
+            total_brl: "0",
+            fee_brl: "0",
+            send_brl: "0",
+            timeout: "0",
+            amount_bxbrz: "0",
+            price_bxbrz: "0",
+            value_usd: "0",
+            total_bxbrz: "0",
+        }
+    }
+}
+async function buydatain(data, res) {
+    const array = await onbuytwt(datap, res, inArray())
+    res.send(array)
+}
+
+async function gettax(data, res) {
+    const h = await onbuytwt(data, res, inArray())
+    const usd = data.tokenACT == wbnb
+        ? [0, h.data.BNBGasUsage]
+        : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
+    let datap = {
+        account: data.account,
+        amount: (data.amount - usd[1]).toLocaleString('fullwide', { useGrouping: false }),
+        amountax: usd[1],
+        tokenACT: data.tokenACT,
+        tokenBCT: data.tokenBCT
+    }
+    /* if (data.tokenACT == wbnb) {
+         sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
+     } else {
+         if (datap.tokenBCT == wbnb) {
+             sendTX(bot.methods._swapTpWBNB, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
+         } else {
+             sendTX(bot.methods._swapTpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
+         }
+ 
+     }*/
+}
+
 async function approve(data, res) {
     const tk = await new web3.Contract(bnbabi, data.tokenACT);
     sendTX(tk.methods.approve, [], res, 0, data.account, (data.amount).toString())
 }
-
-router.post('/approve', function (req, res) {
-    let data = {
-        account: botCT,
-        amount: req.body.amount,
-        tokenACT: toChecksumAddress(req.body.from),
-    }
-    try {
-        approve(data, res)
-    } catch (error) {
-        errorreturn(error, res)
-    }
-
-});
-
-async function getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
-    request('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT, function (error, response, body) {
-        var p = JSON.parse(body)
-        const BuyTax = 100 - parseInt(p.BuyTax)
-        res.send(
-            jsondata(
-                h,
-                gas,
-                value(nextblock(a, dec), 100, dec),
-                valuetojson(a - tax <= 0, value(nextblock(a - tax, dec), BuyTax, dec)),
-                valuetojson(a - tax <= 0, nextblock(value(nextblock(a - tax, dec), BuyTax, dec), dec)),
-                (gas) * gwei,
-                nextblock(usd, 18)
-            )
-        );
-    });
+async function returnusdt(account, amount, tokenACT, res) {
+    const tk = await new web3.Contract(bnbabi, tokenACT);
+    sendTX(tk.methods.transfer, [], res, 0, account, (amount).toString())
 }
-async function buytwt(data, res, h) {
-    let account = data.account
-    let amount = data.amount
-    let amountax = data.amountax
-    let tokenACT = data.tokenACT
-    let tokenBCT = data.tokenBCT
-    const tkA = new web3.Contract(bnbabi, tokenACT);
-    const tk = new web3.Contract(bnbabi, tokenBCT);
 
-    const balanceTA = await tkA.methods.balanceOf(wallet).call()
 
-    const dec = await tk.methods.decimals().call()
-    const decA = await tkA.methods.decimals().call()
-    if (tokenACT != wbnb) {
-        const h = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenACT).then((response) => response.json())
-        amount = value(nextblock(amount, decA), (100 - h.BuyTax), decA);
-    }
-    if (tokenBCT == tokenACT) {
-        errorreturn("Cannot Swap Same Token", res)
-    } else {
-        if (tokenACT == wbnb) {
-            const gas = await gasTX(bot.methods._swapWBNBpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
-            const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
-            const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
-            const a = await callTX(bot.methods.quoteBNBpT, amount, tokenACT, tokenBCT)
-            getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
-        } else {
-            if (tokenBCT == wbnb) {
-                const gas = await gasTX(bot.methods._swapTpWBNB, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
-                const tax = ((gas) * gwei).toString()
-                const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
-                const a = await callTX(bot.methods.quoteTpBNB, amount, tokenACT, tokenBCT)
-                getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
-            } else {
-                const gas = await gasTX(bot.methods._swapTpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
-                const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
-                const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
-                const a = await callTX(bot.methods.quotetpt, amount, tokenACT, tokenBCT)
-                getRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
-            }
-        }
-    }
-}
-async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
-    const p = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
-    const BuyTax = 100 - parseInt(p.BuyTax)
-    return jsondata(
-        h,
-        gas,
-        value(nextblock(a, dec), 100, dec),
-        valuetojson(a - tax <= 0, value(nextblock(a - tax, dec), BuyTax, dec)),
-        valuetojson(a - tax <= 0, nextblock(value(nextblock(a - tax, dec), BuyTax, dec), dec)),
-        (gas) * gwei,
-        nextblock(usd, 18)
-    )
-}
 async function onbuytwt(data, res, h) {
     let account = data.account
     let amount = data.amount
@@ -316,28 +210,37 @@ async function onbuytwt(data, res, h) {
             const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
             const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
             const a = await callTX(bot.methods.quoteBNBpT, amount, tokenACT, tokenBCT)
-            ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
+            return ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
         } else {
             if (tokenBCT == wbnb) {
                 const gas = await gasTX(bot.methods._swapTpWBNB, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
                 const tax = ((gas) * gwei).toString()
                 const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
                 const a = await callTX(bot.methods.quoteTpBNB, amount, tokenACT, tokenBCT)
-                ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
+                return ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
             } else {
                 const gas = await gasTX(bot.methods._swapTpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
                 const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
                 const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
                 const a = await callTX(bot.methods.quotetpt, amount, tokenACT, tokenBCT)
-                ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
+                return ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
             }
         }
     }
 }
-
-async function returnusdt(account, amount, tokenACT, res) {
-    const tk = await new web3.Contract(bnbabi, tokenACT);
-    sendTX(tk.methods.transfer, [], res, 0, account, (amount).toString())
+async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
+    const p = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
+    const BuyTax = 100 - parseInt(p.BuyTax)
+    const aa = jsondata(
+        h,
+        gas,
+        value(nextblock(a, dec), 100, dec),
+        valuetojson(a - tax <= 0, value(nextblock(a - tax, dec), BuyTax, dec)),
+        valuetojson(a - tax <= 0, nextblock(value(nextblock(a - tax, dec), BuyTax, dec), dec)),
+        (gas) * gwei,
+        nextblock(usd, 18)
+    )
+    return aa
 }
 async function errorreturn(error, res) {
     var e = {
@@ -374,6 +277,7 @@ function jsondata(h, _Gas, _amountOutNoGas, _amountOutGas, _amountOutGasFormated
     return m;
 }
 //endpoints
+
 router.post('/swap', function (req, res) {
     console.log("trade started");
     let data = {
@@ -398,9 +302,7 @@ router.get('/swapquote', function (req, res) {
     const tokenA = req.query.tokenA;
     const tokenB = req.query.tokenB;
 
-    if (req.url == "/swapquote") {
-
-    } else {
+    if (req.url == "/swapquote") { } else {
         if (req.url.includes("?")) {
             let data = {
                 account: toChecksumAddress(account),
@@ -424,9 +326,7 @@ router.get('/swapquotein', function (req, res) {
     const tokenA = req.query.tokenA;
     const tokenB = req.query.tokenB;
 
-    if (req.url == "/swapquotein") {
-
-    } else {
+    if (req.url == "/swapquotein") { } else {
         if (req.url.includes("?")) {
             let data = {
                 account: toChecksumAddress(account),
@@ -442,6 +342,19 @@ router.get('/swapquotein', function (req, res) {
             }
         }
     }
+});
+router.post('/approve', function (req, res) {
+    let data = {
+        account: botCT,
+        amount: req.body.amount,
+        tokenACT: toChecksumAddress(req.body.from),
+    }
+    try {
+        approve(data, res)
+    } catch (error) {
+        errorreturn(error, res)
+    }
+
 });
 
 module.exports = router;
