@@ -136,11 +136,20 @@ async function gettax(data, res) {
             total_bxbrz: "0",
         }
     }
-    const h = await onbuytwt(data, res, p)
+    onbuytwt(data, res, p)
+        .then(h => {
+            SENDTRANSACTION(data, res, h)
+        })
+        .catch(e => {
+            console.log(e)
+        })
+
+}
+async function SENDTRANSACTION(data, res, h) {
     console.log(h);
     const usd = data.tokenACT == wbnb
-        ? [0, h.BNBGasUsage]
-        : await pancake.methods.getAmountsOut((h.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
+        ? [0, h.data.BNBGasUsage]
+        : await pancake.methods.getAmountsOut((h.data.BNBGasUsage).toString(), [wbnb, data.tokenACT]).call()
     let datap = {
         account: data.account,
         amount: (data.amount - usd[1]).toLocaleString('fullwide', { useGrouping: false }),
@@ -158,6 +167,7 @@ async function gettax(data, res) {
          }
  
      }*/
+
 }
 async function gasTX(func, ...args) {
     const data = await func(...args).estimateGas({ from: wallet })
@@ -271,17 +281,15 @@ async function buytwt(data, res, h) {
 async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
     const p = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
     const BuyTax = 100 - parseInt(p.BuyTax)
-    return (
-        jsondata(
-            h,
-            gas,
-            value(nextblock(a, dec), 100, dec),
-            valuetojson(a - tax <= 0, value(nextblock(a - tax, dec), BuyTax, dec)),
-            valuetojson(a - tax <= 0, nextblock(value(nextblock(a - tax, dec), BuyTax, dec), dec)),
-            (gas) * gwei,
-            nextblock(usd, 18)
-        )
-    );
+    return jsondata(
+        h,
+        gas,
+        value(nextblock(a, dec), 100, dec),
+        valuetojson(a - tax <= 0, value(nextblock(a - tax, dec), BuyTax, dec)),
+        valuetojson(a - tax <= 0, nextblock(value(nextblock(a - tax, dec), BuyTax, dec), dec)),
+        (gas) * gwei,
+        nextblock(usd, 18)
+    )
 }
 async function onbuytwt(data, res, h) {
     let account = data.account
