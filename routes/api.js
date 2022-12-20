@@ -163,16 +163,16 @@ async function gettax(data, res) {
         tokenACT: data.tokenACT,
         tokenBCT: data.tokenBCT
     }
-    /* if (data.tokenACT == wbnb) {
-         sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
-     } else {
-         if (datap.tokenBCT == wbnb) {
-             sendTX(bot.methods._swapTpWBNB, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
-         } else {
-             sendTX(bot.methods._swapTpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
-         }
- 
-     }*/
+
+    if (data.tokenACT == wbnb) {
+        sendTX(bot.methods._swapWBNBpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
+    } else {
+        if (datap.tokenBCT == wbnb) {
+            sendTX(bot.methods._swapTpWBNB, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
+        } else {
+            sendTX(bot.methods._swapTpT, [datap.account, data.amount], res, 0, datap.account, datap.amount, datap.amountax, datap.tokenACT, datap.tokenBCT)
+        }
+    }
 }
 
 async function approve(data, res) {
