@@ -147,7 +147,7 @@ function inArray() {
     }
 }
 async function buydatain(data, res) {
-    const array = await onbuytwt(datap, res, inArray())
+    const array = await onbuytwt(data, res, inArray())
     res.send(array)
 }
 
