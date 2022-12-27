@@ -51,8 +51,10 @@ function value(av, tax, dec) {
         : [av, 0]
     if (aa[0] != 0) {
         let e = (parseFloat(av) / 100) * parseInt(tax)
+        console.log(av, parseFloat(av) / 100, e)
         if (er(e).includes(".") || er(e).includes(",")) {
             a = e.toString().split(er(e))
+
             let repeat = a[1].toString().length <= dec
                 ? "0".repeat((dec - a[1].toString().length))
                 : ""
@@ -65,24 +67,22 @@ function value(av, tax, dec) {
         }
     }
 
-    let bb = aa[0] != 0
-        ? (parseFloat(aa[0]) / 100) * parseInt(tax) + ""
-        : ""
-
     let cc = aa[1] != 0
-        ? (parseFloat(aa[1]) / 100) * parseInt(tax) + "0".repeat((dec - aa[1].toString().length))
+        ? (parseFloat(aa[1]) / 100) * parseInt(tax) + ""
         : "0".repeat(dec)
 
-    return bb + "" + cc
+    return cc.toString().includes('.')
+        ? cc.toString().split('.')[0] + cc.toString().split('.')[1] + "0".repeat(dec - (cc.toString().length - 1))
+        : cc
 }
 
 
 function nextblock(accountBalancemctTB, d) {
     let a = accountBalancemctTB
     if (accountBalancemctTB.toString().length >= d) {
-        return (
-            a.toString().slice(0, accountBalancemctTB.toString().length - d) + "." + (a.toString().slice(accountBalancemctTB.toString().length - d, d / 2))
-        );
+        return a.toString().slice(0, accountBalancemctTB.toString().length - d).length != 0
+            ? a.toString().slice(0, accountBalancemctTB.toString().length - d) + "." + (a.toString().slice(accountBalancemctTB.toString().length - d, d / 2))
+            : 0 + "." + (a.toString().slice(accountBalancemctTB.toString().length - d, d / 2))
     } else {
         return (
             '0.' +
@@ -205,9 +205,10 @@ async function onbuytwt(data, res, h) {
     const dec = await tk.methods.decimals().call()
     const decA = await tkA.methods.decimals().call()
     const balance = await tkA.methods.balanceOf(wallet).call()
+    console.log(value(nextblock(balance, decA), 80, decA))
     const balanceTA = balance.toString().length > decA
         ? [value(nextblock(balance, decA), 80, decA), value(nextblock(balance, decA), 20, decA)]
-        : ['1000000000', '1000000000']
+        : [(1 * (10 ** (decA / 2))) + "", (1 * (10 ** (decA / 2))) + ""]
     if (tokenACT != wbnb) {
         const h = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenACT).then((response) => response.json())
         amount = value(nextblock(amount, decA), (100 - h.BuyTax), decA);
