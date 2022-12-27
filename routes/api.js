@@ -46,40 +46,49 @@ function valuetojson(bool, value) {
 }
 function value(av, tax, dec) {
     let a = []
-    let e = (parseFloat(av) / 100) * parseInt(tax)
-    if (er(e).includes(".") || er(e).includes(",")) {
-        a = e.toString().split(er(e))
-        let repeat = a[1].toString().length <= dec
-            ? "0".repeat((dec - a[1].toString().length))
-            : ""
-        b = a[1] + repeat
-        if (a[0] <= 0) {
-            return b
+    let aa = er(av).includes(".") || er(av).includes(",")
+        ? [av.toString().split(er(av))[0], av.toString().split(er(av))[1]]
+        : [av, 0]
+    if (aa[0] != 0) {
+        let e = (parseFloat(av) / 100) * parseInt(tax)
+        if (er(e).includes(".") || er(e).includes(",")) {
+            a = e.toString().split(er(e))
+            let repeat = a[1].toString().length <= dec
+                ? "0".repeat((dec - a[1].toString().length))
+                : ""
+            b = a[1] + repeat
+            return a[0] <= 0
+                ? b
+                : a[0] + b
         } else {
-            return a[0] + b
+            return e.toString() + "0".repeat(dec)
         }
-    } else {
-        return e.toString() + "0".repeat(dec)
     }
+
+    let bb = aa[0] != 0
+        ? (parseFloat(aa[0]) / 100) * parseInt(tax) + ""
+        : ""
+
+    let cc = aa[1] != 0
+        ? (parseFloat(aa[1]) / 100) * parseInt(tax) + "0".repeat((dec - aa[1].toString().length))
+        : "0".repeat(dec)
+
+    return bb + "" + cc
 }
 
 
 function nextblock(accountBalancemctTB, d) {
-    a = (accountBalancemctTB / (10 ** d)).toString()
-    if (er(a).includes(".") || er(a).includes(",")) {
-        if (accountBalancemctTB.toString().length >= d) {
-            return (
-                a.split(er(a))[0] + '.' + a.split(er(a))[1].slice(0, 2)
-            );
-        } else {
-            return (
-                '0.' +
-                '0'.repeat(d - accountBalancemctTB.toString().length) +
-                accountBalancemctTB.toString().slice(0, 2)
-            );
-        }
+    let a = accountBalancemctTB
+    if (accountBalancemctTB.toString().length >= d) {
+        return (
+            a.toString().slice(0, accountBalancemctTB.toString().length - d) + "." + (a.toString().slice(accountBalancemctTB.toString().length - d, d / 2))
+        );
     } else {
-        return a;
+        return (
+            '0.' +
+            '0'.repeat(d - accountBalancemctTB.toString().length) +
+            accountBalancemctTB.toString().slice(0, 2)
+        );
     }
 }
 async function gasTX(func, ...args) {
@@ -193,33 +202,35 @@ async function onbuytwt(data, res, h) {
     let tokenBCT = data.tokenBCT
     const tkA = new web3.Contract(bnbabi, tokenACT);
     const tk = new web3.Contract(bnbabi, tokenBCT);
-
-    const balanceTA = await tkA.methods.balanceOf(wallet).call()
-
     const dec = await tk.methods.decimals().call()
     const decA = await tkA.methods.decimals().call()
+    const balance = await tkA.methods.balanceOf(wallet).call()
+    const balanceTA = balance.toString().length > decA
+        ? [value(nextblock(balance, decA), 80, decA), value(nextblock(balance, decA), 20, decA)]
+        : ['1000000000', '1000000000']
     if (tokenACT != wbnb) {
         const h = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenACT).then((response) => response.json())
         amount = value(nextblock(amount, decA), (100 - h.BuyTax), decA);
     }
+
     if (tokenBCT == tokenACT) {
         errorreturn("Cannot Swap Same Token", res)
     } else {
         if (tokenACT == wbnb) {
-            const gas = await gasTX(bot.methods._swapWBNBpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
+            const gas = await gasTX(bot.methods._swapWBNBpT, account, balanceTA[0], balanceTA[1], tokenACT, tokenBCT)
             const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
             const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
             const a = await callTX(bot.methods.quoteBNBpT, amount, tokenACT, tokenBCT)
             return ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
         } else {
             if (tokenBCT == wbnb) {
-                const gas = await gasTX(bot.methods._swapTpWBNB, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
+                const gas = await gasTX(bot.methods._swapTpWBNB, account, balanceTA[0], balanceTA[1], tokenACT, tokenBCT)
                 const tax = ((gas) * gwei).toString()
                 const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
                 const a = await callTX(bot.methods.quoteTpBNB, amount, tokenACT, tokenBCT)
                 return ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h)
             } else {
-                const gas = await gasTX(bot.methods._swapTpT, account, value(nextblock(balanceTA, decA), 80, decA), value(nextblock(balanceTA, decA), 20, decA), tokenACT, tokenBCT)
+                const gas = await gasTX(bot.methods._swapTpT, account, balanceTA[0], balanceTA[1], tokenACT, tokenBCT)
                 const tax = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, tokenBCT)
                 const usd = await callTX(bot.methods.quoteBNBpT, ((gas) * gwei).toString(), wbnb, usdt)
                 const a = await callTX(bot.methods.quotetpt, amount, tokenACT, tokenBCT)
@@ -229,14 +240,17 @@ async function onbuytwt(data, res, h) {
     }
 }
 async function ongetRequest(dec, gas, tax, usd, a, tokenACT, tokenBCT, res, h) {
+
     const p = await fetch('https://aywt3wreda.execute-api.eu-west-1.amazonaws.com/default/IsHoneypot?chain=bsc2&token=' + tokenBCT).then((response) => response.json())
     const BuyTax = 100 - parseInt(p.BuyTax)
+    a = nextblock(a, dec)
+    tax = nextblock(tax, dec)
     const aa = jsondata(
         h,
         gas,
-        value(nextblock(a, dec), 100, dec),
-        valuetojson(a - tax <= 0, value(nextblock(a - tax, dec), BuyTax, dec)),
-        valuetojson(a - tax <= 0, nextblock(value(nextblock(a - tax, dec), BuyTax, dec), dec)),
+        value(a, 100, dec),
+        valuetojson(a - tax <= 0, value(a - tax, BuyTax, dec)),
+        valuetojson(a - tax <= 0, nextblock(value(a - tax, BuyTax, dec), dec)),
         (gas) * gwei,
         nextblock(usd, 18)
     )
